@@ -1,64 +1,37 @@
-# open-slide workspace
+# slides
 
-Slides as React components. Each slide lives under `slides/<id>/index.tsx` and default-exports an array of page components. The `@open-slide/core` runtime handles layout, scaling, navigation, thumbnails, and fullscreen play mode — you just write the pages.
+An ongoing pile of talks, experiments, and questionable presentation ideas.
+They are React components rendered with open-slide.
 
-## Getting started
+Each deck lives in `slides/<deck-name>/index.tsx` and exports an ordered list
+of pages. This is nice because the slides are just code: easy to tweak, easy to
+reuse, and no one has to drag a text box two pixels to the left ever again.
+
+## Run a deck
 
 ```bash
-pnpm install
-pnpm dev
+npm install
+npm run dev
 ```
 
-Then open the dev server and edit `slides/getting-started/index.tsx`, or create a new slide at `slides/<your-slide>/index.tsx`.
+Use the browser UI to pick a deck. Press `F` to present; arrow keys move
+through pages and stepped reveals.
 
-## Scripts
-
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Start the dev server with hot reload. |
-| `pnpm build` | Build a static bundle you can deploy. |
-| `pnpm preview` | Preview the built bundle locally. |
-
-## Authoring a slide
-
-```tsx
-// slides/my-slide/index.tsx
-import type { Page, SlideMeta } from '@open-slide/core';
-
-const Cover: Page = () => (
-  <div style={{ width: '100%', height: '100%' }}>Hello</div>
-);
-
-export const meta: SlideMeta = { title: 'My slide' };
-export default [Cover] satisfies Page[];
+```bash
+npm run build
+npm run preview
 ```
 
-Every page renders into a fixed **1920 × 1080** canvas — design with absolute pixel values. Put images, videos, and fonts under `slides/<id>/assets/` and import them directly.
+The canvas is 1920 × 1080. Assets for a deck live beside it in
+`slides/<deck-name>/assets/`; shared bits go in `assets/`.
 
-See [`CLAUDE.md`](./CLAUDE.md) for the full authoring guide.
+## Currently here
 
-## Navigation
+`slack-emoji-filesystem` is the one where I tried to build a filesystem out of
+Slack custom emoji. It is a bad storage idea and a very fun way to learn how
+filesystems work.
 
-- Arrow keys / PageUp / PageDown move between pages.
-- `F` enters fullscreen play mode; Esc exits.
-- In play mode: Space / → next, ← prev.
+## Assets
 
-## Claude Code integration
-
-This workspace ships with Claude Code skills preconfigured under `.claude/skills/` and `.agents/skills/`. Ask Claude Code to "make slides about X" and the `create-slide` skill takes over. Use `apply-comments` to iterate via inspector-style markers inside your source.
-
-## Config
-
-Optional `open-slide.config.ts` at the workspace root:
-
-```ts
-import type { OpenSlideConfig } from '@open-slide/core';
-
-const openSlideConfig: OpenSlideConfig = {
-  port: 5173,
-};
-
-export default openSlideConfig;
-```
-
-Supported fields: `slidesDir`, `port`.
+See [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) for the licensing scope
+of presentation assets.

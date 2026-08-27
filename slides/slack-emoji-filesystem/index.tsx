@@ -17,7 +17,7 @@ import bowserEmojis from './assets/bowser-emojis.jpg';
 import bufoBowser from './assets/bufo-bowser.png';
 import bufoBowserLossless from './assets/bufo-bowser-lossless.png';
 import bratbucket from './assets/bratbucket.png';
-import bufoEmoji from './assets/bufo-just-walked-into-an-awkward-conversation.png';
+import bufoCheese from './assets/bufo-cheese.png';
 import chatgptLogo from './assets/chatgpt-logo-inverse.png';
 import factorioFloppyDisks from './assets/factorio-floppy-disks-news-article.png';
 import foreshadowing from './assets/foreshadowing.png';
@@ -33,6 +33,8 @@ import emojiObjectExample from './assets/emoji-object-example.png';
 import stathams from './assets/stathams.png';
 import pythonFuseGithub from './assets/python-fuse-github.png';
 import runningDoom from './assets/runningdoom.png';
+import fuseSlackEmojiQr from './assets/fuse-slack-emoji-qr.png';
+import talkSlidesQr from './assets/talk-slides-qr.png';
 
 export const design: DesignSystem = {
   palette: { bg: '#242432', text: '#d5cabd', accent: '#e987e0' },
@@ -44,7 +46,7 @@ export const design: DesignSystem = {
   radius: 0,
 };
 
-const FONT_HREF = 'https://fonts.googleapis.com/css2?family=Rokkitt:wght@400;700&display=swap';
+const FONT_HREF = 'https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Rokkitt:wght@400;700&display=swap';
 const FONT_LINK_ID = 'osd-webfont-slack-emoji-filesystem';
 if (typeof document !== 'undefined' && !document.getElementById(FONT_LINK_ID)) {
   const link = document.createElement('link');
@@ -295,6 +297,89 @@ const DataQr = ({ left, top, label, seed, rotation = 0 }: { left: number; top: n
   </div>
 );
 
+const QrLink = ({
+  href,
+  qr,
+  alt,
+  path,
+  emojiName,
+  note,
+  accent,
+  rotation,
+  captionSide,
+}: {
+  href: string;
+  qr: string;
+  alt: string;
+  path: string;
+  emojiName: string;
+  note: string;
+  accent: string;
+  rotation: number;
+  captionSide: 'left' | 'right';
+}) => (
+  <a
+    href={href}
+    style={{
+      display: 'block',
+      width: 340,
+      color: 'inherit',
+      position: 'relative',
+      textAlign: 'center',
+      textDecoration: 'none',
+      transform: `rotate(${rotation}deg)`,
+    }}
+  >
+    <div style={{ marginBottom: 17, color: accent, fontFamily: 'ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace', fontSize: 29, fontWeight: 700 }}>{path}</div>
+    <div style={{ position: 'relative', width: 300, height: 300, margin: '0 auto' }}>
+      <img src={qr} alt={alt} style={{ position: 'relative', display: 'block', width: 300, height: 300 }} />
+      <div aria-hidden="true" style={{ position: 'absolute', left: -12, top: -12, width: 48, height: 48, borderLeft: `6px solid ${accent}`, borderTop: `6px solid ${accent}` }} />
+      <div aria-hidden="true" style={{ position: 'absolute', right: -12, bottom: -12, width: 48, height: 48, borderRight: `6px solid ${accent}`, borderBottom: `6px solid ${accent}` }} />
+    </div>
+    <div style={{ marginTop: 22, color: muted, fontFamily: 'ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace', fontSize: 23 }}>{emojiName}</div>
+    <div
+      style={{
+        position: 'absolute',
+        left: captionSide === 'left' ? -440 : 480,
+        top: 390,
+        width: 300,
+        color: 'var(--osd-text)',
+        fontFamily: '"Caveat", "Bradley Hand", cursive',
+        fontSize: 36,
+        fontWeight: 600,
+        lineHeight: 1,
+        textAlign: captionSide === 'left' ? 'right' : 'left',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {note}
+    </div>
+    <svg
+      aria-hidden="true"
+      width="150"
+      height="170"
+      viewBox="0 0 150 170"
+      style={{ position: 'absolute', left: captionSide === 'left' ? -140 : 330, top: 240, overflow: 'visible' }}
+    >
+      <defs>
+        <marker id={`qr-caption-arrow-${captionSide}`} viewBox="0 0 12 12" refX="10" refY="6" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M2 1 L10 6 L2 11" fill="none" stroke={accent} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        </marker>
+      </defs>
+      <g transform={captionSide === 'right' ? 'translate(150 0) scale(-1 1)' : undefined}>
+        <path
+          d="M10 150 C20 108 42 72 78 64 C101 58 124 60 148 60"
+          fill="none"
+          stroke={accent}
+          strokeWidth="5"
+          strokeLinecap="round"
+          markerEnd={`url(#qr-caption-arrow-${captionSide})`}
+        />
+      </g>
+    </svg>
+  </a>
+);
+
 const Arrow = ({ left, top, width = 116, rotate = 0, pink = false }: { left: number; top: number; width?: number; rotate?: number; pink?: boolean }) => (
   <svg aria-hidden="true" width={width} height="32" viewBox={`0 0 ${width} 32`} style={{ position: 'absolute', left, top: top - 16, transform: `rotate(${rotate}deg)`, transformOrigin: 'left center' }}>
     <defs>
@@ -444,8 +529,10 @@ const EmojiShitposting: Page = () => (
         <div style={{ position: 'absolute', left: 1190, top: 575, width: 190, height: 245 }}>
           <img src={bratbucket} alt="The bratbucket custom emoji" style={{ width: 190, height: 245, objectFit: 'contain' }} />
         </div>
+      </Step>
+      <Step duration={170}>
         <div style={{ position: 'absolute', left: 1420, top: 575, width: 250, height: 245 }}>
-          <img src={bufoEmoji} alt="The bufo awkward-conversation custom emoji" style={{ width: 250, height: 245, objectFit: 'contain' }} />
+          <img src={bufoCheese} alt="The Bufo cheese custom emoji" style={{ width: 250, height: 245, objectFit: 'contain' }} />
         </div>
       </Step>
     </Steps>
@@ -1726,6 +1813,13 @@ const LiveDemo: Page = () => (
   </div>
 );
 
+const TitleQuestion: Page = () => (
+  <div style={{ ...base, padding: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+    <Title size={142}>Is storing files in<br /><Accent>Slack emojis</Accent> a bad idea?</Title>
+    <Footer />
+  </div>
+);
+
 const Conclusion: Page = () => (
   <div style={{ ...base, padding: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
     <Title size={142}>Terrible storage.</Title>
@@ -1736,9 +1830,35 @@ const Conclusion: Page = () => (
 );
 
 const End: Page = () => (
-  <div style={{ ...base, padding: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-    <Title size={180}>cheers :)</Title>
-    <div style={{ marginTop: 56, color: pinkLight, fontSize: 64 }}>ashl.dev</div>
+  <div style={{ ...base, padding: 120, position: 'relative', textAlign: 'center' }}>
+    <div style={{ position: 'absolute', left: 0, right: 0, top: 76, color: 'var(--osd-text)', fontFamily: '"Caveat", "Bradley Hand", cursive', fontSize: 190, fontWeight: 600, letterSpacing: '-0.04em', lineHeight: 0.9 }}>cheers :)</div>
+    <div style={{ position: 'absolute', left: 0, right: 0, top: 288, color: pinkLight, fontSize: 58 }}>ashl.dev</div>
+    <div style={{ position: 'absolute', left: 560, top: 402 }}>
+      <QrLink
+        href="https://github.com/ashleylamont/fuse-slack-emoji"
+        qr={fuseSlackEmojiQr}
+        alt="QR code linking to the fuse-slack-emoji GitHub repository"
+        path="/source"
+        emojiName=":efs_repo:"
+        note="check out the file system"
+        accent={pinkLight}
+        rotation={-1.1}
+        captionSide="left"
+      />
+    </div>
+    <div style={{ position: 'absolute', left: 1020, top: 402 }}>
+      <QrLink
+        href="https://github.com/ashleylamont/slides/tree/main/slides/slack-emoji-filesystem"
+        qr={talkSlidesQr}
+        alt="QR code linking to the SlackEmojiFS talk slides on GitHub"
+        path="/slides"
+        emojiName=":efs_slides:"
+        note="these these slides with you"
+        accent={lilac}
+        rotation={1.1}
+        captionSide="right"
+      />
+    </div>
     <Footer />
   </div>
 );
@@ -1750,7 +1870,17 @@ export const meta: SlideMeta = {
 };
 
 // Index-aligned with the assembled draft deck.
-export const notes: (string | undefined)[] = [
+const noteTargets = [
+  '00:00', '00:20', '00:35', '00:50', '01:15', '01:35', '01:55', '02:10', '02:30', '02:50',
+  '03:10', '03:30', '03:50', '04:10', '04:35', '05:00', '05:25', '05:45', '06:05', '06:35',
+  '07:05', '07:35', '07:55', '08:15', '08:35', '08:50', '09:05', '09:20', '09:35', '09:50',
+  '10:05', '10:20', '10:35', '10:50', '11:05', '11:20', '11:35', '11:55', '12:15', '12:35',
+  '12:55', '13:20', '13:45', '14:05', '14:50', '15:15', '15:35', '16:00', '16:20',
+  '16:40', '17:00', '17:20', '17:40', '18:00', '18:20', '18:45', '19:10', '19:30', '19:50',
+  '20:10', '20:30', '20:50', '21:10', '21:40', '22:00', '23:45', '24:15', '25:00',
+] as const;
+
+const rawNotes: (string | undefined)[] = [
   'Read out the title.',
   'Briefly set the scene before introducing myself and where I work.',
   'Quick introduction only.',
@@ -1816,9 +1946,14 @@ export const notes: (string | undefined)[] = [
   'The verdict as storage is straightforward: latency, rate limits, poor efficiency, and unresolved garbage collection make this a terrible production backend.',
   'A normal filesystem hides most of its machinery. Slack gives us only emoji images and names, so we have to build the storage format, naming scheme, references, and update behaviour ourselves. That is why it is useful for learning.',
   'Run the prepared one-to-two-minute demo: list a directory, read a tiny file, optionally write one, then show the resulting emoji objects or viewer. Use the matching recording if needed.',
-  'Return to the opening question: terrible storage, but a great way to learn how filesystems work.',
-  'Thank the audience and leave ashl.dev on screen for anything they want to find afterwards.',
+  'Return to the opening question and answer it plainly: yes, it is a bad idea — and that is exactly why it is useful.',
+  'Deliver the final verdict: terrible storage, great way to learn filesystems.',
+  'Thank the audience and leave ashl.dev plus the two QR codes on screen: one for the filesystem source and one for the talk slides.',
 ];
+
+if (noteTargets.length !== rawNotes.length) throw new Error('Every slide needs one elapsed-time target.');
+
+export const notes: string[] = rawNotes.map((note, index) => `Target elapsed: ${noteTargets[index]}\n${note ?? ''}`);
 
 export default [
   Cover,
@@ -1886,6 +2021,7 @@ export default [
   StorageVerdict,
   TeachingDevice,
   LiveDemo,
+  TitleQuestion,
   Conclusion,
   End,
 ] satisfies Page[];

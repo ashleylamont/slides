@@ -88,9 +88,10 @@ const Footer = () => {
 const Eyebrow = ({ children }: { children: React.ReactNode }) => (
   <div
     style={{
-      fontFamily: '"Coming Soon", "Comic Sans MS", cursive',
+      fontFamily: '"Rokkitt", Rockwell, Georgia, serif',
       fontSize: 26,
       fontWeight: 400,
+      fontStyle: 'italic',
       color: '#9f9894',
     }}
   >
@@ -155,7 +156,7 @@ const base = {
 } as const;
 
 const fonts = (
-  <style>{`@import url('https://fonts.googleapis.com/css2?family=Coming+Soon&family=Rokkitt:wght@400;700&display=swap');`}</style>
+  <style>{`@import url('https://fonts.googleapis.com/css2?family=Rokkitt:wght@400;700&display=swap');`}</style>
 );
 
 const Cover: Page = () => (

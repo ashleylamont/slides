@@ -21,9 +21,8 @@ mode: dark
 
 - Display font: `"Rokkitt", Rockwell, Georgia, serif` — weight 700 for headlines; confident without feeling corporate.
 - Body font: `"Rokkitt", Rockwell, Georgia, serif` — weight 400 for an open, conversational reading texture.
-- Accent font: `"Coming Soon", "Comic Sans MS", cursive` — weight 400, used only for an occasional handwritten aside or tiny cover note; never for a full headline and never inserted just to repeat the theme name.
 - Code font: `ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace` — weight 400; use the audience's familiar platform monospace rather than introducing another branded face.
-- Webfont import: `https://fonts.googleapis.com/css2?family=Coming+Soon&family=Rokkitt:wght@400;700&display=swap` — demos may use an inline `@import`; real slides should load it once from module scope per `slide-authoring` webfont guidance.
+- Webfont import: `https://fonts.googleapis.com/css2?family=Rokkitt:wght@400;700&display=swap` — real slides should load it once from module scope per `slide-authoring` webfont guidance.
 - Type-scale overrides:
   - Hero title: 176 px.
   - Section heading: 112 px.
@@ -60,7 +59,7 @@ Choose the format that matches the idea. These are defaults, not a requirement t
 
 | Format | Default composition | Accent and density |
 | --- | --- | --- |
-| Cover / section break | Centered title and at most one plain sentence. A tiny handwritten note is optional, never automatic. | Accent one word at most. No kicker unless it carries real information. |
+| Cover / section break | Centered title and at most one plain sentence. A small muted note is optional, never automatic. | Accent one word at most. No kicker unless it carries real information. |
 | Big statement | One statement at 112–150 px, left-aligned or centered, occupying no more than three lines. | Accent the turn in the sentence, not the whole sentence. |
 | Explanation | Quiet 55/45 split: claim or heading on the left, one or two short paragraphs on the right. | Keep the supporting column under roughly 35 words. Use whitespace, not a divider. |
 | List / takeaways | Page heading above 3–5 short items. Use small muted numbers only when sequence or priority matters. | No cards, pills, or a rule between every row. Accent only the current item if the list evolves on cue. |
@@ -131,15 +130,16 @@ const Footer = () => {
 
 ### Eyebrow / accents
 
-Use the eyebrow only for an occasional handwritten aside or tiny cover note. Omit it by default; it is not a generic category label and should not automatically repeat the theme name.
+Use the eyebrow only for an occasional small aside or tiny cover note. It uses the body face, slightly italicised; omit it by default rather than making it a generic category label.
 
 ```tsx
 const Eyebrow = ({ children }: { children: React.ReactNode }) => (
   <div
     style={{
-      fontFamily: '"Coming Soon", "Comic Sans MS", cursive',
+      fontFamily: '"Rokkitt", Rockwell, Georgia, serif',
       fontSize: 26,
       fontWeight: 400,
+      fontStyle: 'italic',
       color: '#9f9894',
     }}
   >
@@ -331,7 +331,7 @@ Detail.transition = diagramMorph;
 
 ## Aesthetic
 
-Personal editorial: warm serif typography on one deep aubergine field, with just enough pink to reveal what matters. The voice is informal, direct, enthusiastic, and a little self-deprecating; prefer ordinary phrases such as “make stuff,” “cool projects,” and “I’m a massive nerd” over polished campaign language. The layout should feel handmade because of its judgment and phrasing, not because it imitates a retro browser. Keep the handwritten face rare, keep decoration quieter than the content, and avoid gradients, alternate background panels, ornamental rules, pill-shaped labels, corporate polish, contrived taglines, or Comic-Sans-like headline styling.
+Personal editorial: warm serif typography on one deep aubergine field, with just enough pink to reveal what matters. The voice is informal, direct, enthusiastic, and a little self-deprecating; prefer ordinary phrases such as “make stuff,” “cool projects,” and “I’m a massive nerd” over polished campaign language. The layout should feel handmade because of its judgment and phrasing, not because it imitates a retro browser. Keep decoration quieter than the content, and avoid gradients, alternate background panels, ornamental rules, pill-shaped labels, corporate polish, contrived taglines, or novelty font styling.
 
 ## Example usage
 

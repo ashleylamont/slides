@@ -35,6 +35,8 @@ import pythonFuseGithub from './assets/python-fuse-github.png';
 import runningDoom from './assets/runningdoom.png';
 import fuseSlackEmojiQr from './assets/fuse-slack-emoji-qr.png';
 import talkSlidesQr from './assets/talk-slides-qr.png';
+import pycharmLogo from './assets/pycharm.webp';
+import pyreflyLogo from './assets/pyrefly-dark-lockup.png';
 
 export const design: DesignSystem = {
   palette: { bg: '#242432', text: '#d5cabd', accent: '#e987e0' },
@@ -1829,6 +1831,24 @@ const Conclusion: Page = () => (
   </div>
 );
 
+const SponsorThanks: Page = () => (
+  <div style={{ ...base, padding: 120, textAlign: 'center' }}>
+    <div style={{ position: 'absolute', left: 0, right: 0, top: 156 }}>
+      <Title size={76}>Thanks, <Accent>PyCharm + Pyrefly.</Accent></Title>
+    </div>
+    <div style={{ position: 'absolute', left: 350, top: 375, width: 430, height: 320, display: 'grid', placeItems: 'center' }}>
+      <img src={pycharmLogo} alt="PyCharm" style={{ width: 330, height: 250, objectFit: 'contain' }} />
+    </div>
+    <div style={{ position: 'absolute', left: 1140, top: 375, width: 430, height: 320, display: 'grid', placeItems: 'center' }}>
+      <img src={pyreflyLogo} alt="Pyrefly" style={{ width: 390, height: 220, objectFit: 'contain' }} />
+    </div>
+    <div style={{ position: 'absolute', left: 0, right: 0, top: 805, color: muted, fontSize: 28, fontStyle: 'italic' }}>
+      PyCon AU sponsors — and genuinely helpful on this project.
+    </div>
+    <Footer />
+  </div>
+);
+
 const End: Page = () => (
   <div style={{ ...base, padding: 120, position: 'relative', textAlign: 'center' }}>
     <div style={{ position: 'absolute', left: 0, right: 0, top: 76, color: 'var(--osd-text)', fontFamily: '"Caveat", "Bradley Hand", cursive', fontSize: 190, fontWeight: 600, letterSpacing: '-0.04em', lineHeight: 0.9 }}>cheers :)</div>
@@ -1859,6 +1879,11 @@ const End: Page = () => (
         captionSide="right"
       />
     </div>
+    <div style={{ position: 'absolute', right: 350, bottom: 89, color: muted, fontFamily: '"Caveat", "Bradley Hand", cursive', fontSize: 40, fontWeight: 600, transform: 'rotate(-7deg)' }}>nice :)</div>
+    <svg aria-hidden="true" width="140" height="70" viewBox="0 0 140 70" style={{ position: 'absolute', left: 1605, top: 943, overflow: 'visible' }}>
+      <path d="M4 14 Q72 8 128 54" fill="none" stroke={muted} strokeWidth="3" strokeLinecap="round" />
+      <path d="M128 54 L116 47 M128 54 L122 40" fill="none" stroke={muted} strokeWidth="3" strokeLinecap="round" />
+    </svg>
     <Footer />
   </div>
 );
@@ -1877,7 +1902,8 @@ const noteTargets = [
   '10:05', '10:20', '10:35', '10:50', '11:05', '11:20', '11:35', '11:55', '12:15', '12:35',
   '12:55', '13:20', '13:45', '14:05', '14:50', '15:15', '15:35', '16:00', '16:20',
   '16:40', '17:00', '17:20', '17:40', '18:00', '18:20', '18:45', '19:10', '19:30', '19:50',
-  '20:10', '20:30', '20:50', '21:10', '21:40', '22:00', '23:45', '24:15', '25:00',
+  '20:10', '20:30', '20:50', '21:10', '21:40', '22:00', '23:45', '24:15', '24:35',
+  '25:00',
 ] as const;
 
 const rawNotes: (string | undefined)[] = [
@@ -1948,6 +1974,7 @@ const rawNotes: (string | undefined)[] = [
   'Run the prepared one-to-two-minute demo: list a directory, read a tiny file, optionally write one, then show the resulting emoji objects or viewer. Use the matching recording if needed.',
   'Return to the opening question and answer it plainly: yes, it is a bad idea — and that is exactly why it is useful.',
   'Deliver the final verdict: terrible storage, great way to learn filesystems.',
+  'Acknowledge PyCharm and Pyrefly: both were genuinely helpful while building this project, and both sponsor PyCon AU. Then advance to the QR-code closing slide.',
   'Thank the audience and leave ashl.dev plus the two QR codes on screen: one for the filesystem source and one for the talk slides.',
 ];
 
@@ -2023,5 +2050,6 @@ export default [
   LiveDemo,
   TitleQuestion,
   Conclusion,
+  SponsorThanks,
   End,
 ] satisfies Page[];

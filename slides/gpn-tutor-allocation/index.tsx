@@ -355,9 +355,105 @@ const BandRow = ({ number, title }: { number: string; title: string }) => (
   </div>
 );
 
+const TetrisRoom = ({ left, label }: { left: number; label: string }) => (
+  <div
+    style={{
+      position: 'absolute',
+      left,
+      top: 384,
+      width: 330,
+      height: 410,
+      border: `3px solid ${line}`,
+      borderTop: 'none',
+      boxSizing: 'border-box',
+    }}
+  >
+    <div style={{ position: 'absolute', top: -54, left: 0, right: 0, color: muted, fontSize: 30, textAlign: 'center' }}>
+      ROOM {label}
+    </div>
+  </div>
+);
+
+const TetrisTutor = ({
+  active,
+  left,
+  top,
+  label,
+  color,
+  delay,
+  width = 136,
+}: {
+  active: boolean;
+  left: number;
+  top: number;
+  label: string;
+  color: string;
+  delay: number;
+  width?: number;
+}) => (
+  <div
+    style={{
+      position: 'absolute',
+      left,
+      top,
+      width,
+      height: 82,
+      display: 'grid',
+      placeItems: 'center',
+      boxSizing: 'border-box',
+      border: `3px solid ${color}`,
+      background: '#2f2d3a',
+      color,
+      fontSize: 30,
+      fontWeight: 700,
+      animation: active ? `gpnTetrisDrop 660ms ${EASE_SETTLE} ${delay}ms both` : undefined,
+    }}
+  >
+    {label}
+  </div>
+);
+
+const FailureChip = ({
+  active,
+  top,
+  label,
+  state,
+  delay,
+}: {
+  active: boolean;
+  top: number;
+  label: string;
+  state: string;
+  delay: number;
+}) => (
+  <div
+    style={{
+      position: 'absolute',
+      left: 1190,
+      top,
+      width: 560,
+      minHeight: 112,
+      display: 'grid',
+      gridTemplateColumns: '62px 1fr auto',
+      alignItems: 'center',
+      gap: 20,
+      padding: '20px 28px',
+      boxSizing: 'border-box',
+      border: `2px solid ${red}`,
+      background: '#302c38',
+      opacity: active ? undefined : 1,
+      animation: active ? `gpnFailureLand 360ms ${EASE_SETTLE} ${delay}ms both` : undefined,
+    }}
+  >
+    <div style={{ color: red, fontSize: 54, fontWeight: 700, lineHeight: 1 }}>×</div>
+    <div style={{ fontSize: 34 }}>{label}</div>
+    <div style={{ color: red, fontSize: 27, fontFamily: 'ui-monospace, monospace' }}>{state}</div>
+  </div>
+);
+
 type LexCellState = 'blank' | 'locked' | 'max';
 
-const LexCell = ({ top, state }: { top: number; state: LexCellState }) => {
+const LexCell = ({ top, state, pulse = false }: { top: number; state: LexCellState; pulse?: boolean }) => {
   const isLocked = state === 'locked';
   const isMax = state === 'max';
   return (
@@ -375,6 +471,7 @@ const LexCell = ({ top, state }: { top: number; state: LexCellState }) => {
         fontFamily: 'ui-monospace, "SFMono-Regular", Menlo, monospace',
         fontSize: 26,
         fontWeight: 700,
+        animation: pulse ? `gpnLexPulse 440ms ${EASE_SETTLE} both` : undefined,
       }}
     >
       {isMax ? 'MAX' : isLocked ? 'LOCKED' : '—'}
@@ -382,18 +479,18 @@ const LexCell = ({ top, state }: { top: number; state: LexCellState }) => {
   );
 };
 
-const LexPassColumn = ({ left, pass }: { left: number; pass: number }) => {
+const LexPassColumn = ({ left, pass, current = false }: { left: number; pass: number; current?: boolean }) => {
   const stateFor = (row: number): LexCellState => row < pass ? 'locked' : row === pass ? 'max' : 'blank';
   return (
-    <div style={{ position: 'absolute', left, top: 0, width: 206 }}>
+    <div style={{ position: 'absolute', left, top: 0, width: 206, animation: current ? `gpnLexColumn 360ms ${EASE_SETTLE} both` : undefined }}>
       <div style={{ position: 'absolute', top: 226, width: 206, color: muted, fontSize: 24, textAlign: 'center', fontFamily: 'ui-monospace, monospace' }}>
         PASS {pass + 1}
       </div>
-      <LexCell top={284} state={stateFor(0)} />
-      <LexCell top={376} state={stateFor(1)} />
-      <LexCell top={468} state={stateFor(2)} />
-      <LexCell top={560} state={stateFor(3)} />
-      <LexCell top={652} state={stateFor(4)} />
+      <LexCell top={284} state={stateFor(0)} pulse={current && pass === 0} />
+      <LexCell top={376} state={stateFor(1)} pulse={current && pass === 1} />
+      <LexCell top={468} state={stateFor(2)} pulse={current && pass === 2} />
+      <LexCell top={560} state={stateFor(3)} pulse={current && pass === 3} />
+      <LexCell top={652} state={stateFor(4)} pulse={current && pass === 4} />
     </div>
   );
 };
@@ -511,11 +608,23 @@ const TradeBar = ({
           height: 44,
           background: winner ? 'var(--osd-accent)' : muted,
           transformOrigin: 'left center',
-          animation: active ? `gpnScoreGrow 720ms ${EASE_SETTLE} ${delay}ms both` : undefined,
+          animation: active
+            ? `${winner ? 'gpnTradeWinner' : 'gpnTradeLeader'} 760ms ${EASE_SETTLE} ${delay}ms both`
+            : undefined,
         }}
       />
     </div>
-    <div style={{ color: winner ? 'var(--osd-accent)' : muted, fontSize: 42, fontFamily: 'ui-monospace, monospace', textAlign: 'right' }}>{score}</div>
+    <div
+      style={{
+        color: winner ? 'var(--osd-accent)' : muted,
+        fontSize: 42,
+        fontFamily: 'ui-monospace, monospace',
+        textAlign: 'right',
+        animation: active ? `gpnTradeScore 220ms ease-out ${delay + 560}ms both` : undefined,
+      }}
+    >
+      {score}
+    </div>
   </div>
 );
 
@@ -591,34 +700,55 @@ const OptimalityGap = () => {
   );
 };
 
-const Cover: Page = () => (
-  <div
-    style={{
-      ...base,
-      padding: '110px 140px',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      textAlign: 'center',
-    }}
-  >
-    <h1
+const Cover: Page = () => {
+  const active = useIsActivePage();
+  return (
+    <div
       style={{
-        margin: 0,
-        maxWidth: 1600,
-        fontFamily: 'var(--osd-font-display)',
-        fontSize: 156,
-        fontWeight: 700,
-        lineHeight: 0.94,
-        letterSpacing: '-0.03em',
+        ...base,
+        padding: '110px 140px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
       }}
     >
-      Allocating GPN Tutors <Accent>Perfectly</Accent> Using Linear Algebra
-    </h1>
-    <Footer />
-  </div>
-);
+      <style>{`
+        @keyframes gpnPerfectPulse {
+          0%, 35% { transform: scale(1); text-shadow: 0 0 0 rgba(233, 135, 224, 0); }
+          58% { transform: scale(1.045); text-shadow: 0 0 34px rgba(233, 135, 224, .28); }
+          78% { transform: scale(.994); }
+          100% { transform: scale(1); text-shadow: 0 0 0 rgba(233, 135, 224, 0); }
+        }
+      `}</style>
+      <h1
+        style={{
+          margin: 0,
+          maxWidth: 1600,
+          fontFamily: 'var(--osd-font-display)',
+          fontSize: 156,
+          fontWeight: 700,
+          lineHeight: 0.94,
+          letterSpacing: '-0.03em',
+        }}
+      >
+        Allocating GPN Tutors{' '}
+        <span
+          style={{
+            display: 'inline-block',
+            color: 'var(--osd-accent)',
+            animation: active ? `gpnPerfectPulse 980ms ${EASE_SETTLE} 380ms both` : undefined,
+          }}
+        >
+          Perfectly
+        </span>{' '}
+        Using Linear Algebra
+      </h1>
+      <Footer />
+    </div>
+  );
+};
 
 const GDay: Page = () => (
   <Statement size={148}>
@@ -649,11 +779,81 @@ const OneEvent: Page = () => (
   </div>
 );
 
-const SpreadsheetTetris: Page = () => (
-  <Statement size={150} align="center">
-    It is <Accent>spreadsheet Tetris.</Accent>
-  </Statement>
-);
+const SpreadsheetTetris: Page = () => {
+  const active = useIsActivePage();
+  return (
+    <div style={base}>
+      <style>{`
+        @keyframes gpnTetrisDrop {
+          0% { opacity: 0; transform: translateY(-360px) rotate(2deg); }
+          74% { opacity: 1; transform: translateY(8px) rotate(-.25deg); }
+          100% { opacity: 1; transform: translateY(0) rotate(0); }
+        }
+        @keyframes gpnTetrisJam {
+          0% { opacity: 0; transform: translateY(-280px) rotate(-3deg); }
+          66% { opacity: 1; transform: translateY(0) rotate(0); }
+          78% { transform: translateY(-14px) rotate(1deg); }
+          100% { opacity: 1; transform: translateY(0) rotate(0); }
+        }
+        @keyframes gpnTetrisNope {
+          0%, 68% { opacity: 0; transform: scale(.8); }
+          82% { opacity: 1; transform: scale(1.08); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+      <div style={{ position: 'absolute', left: 120, right: 120, top: 94, textAlign: 'center', fontSize: 128, fontWeight: 700, lineHeight: 1 }}>
+        It is <Accent>spreadsheet Tetris.</Accent>
+      </div>
+
+      <TetrisRoom left={155} label="A" />
+      <TetrisRoom left={565} label="B" />
+      <TetrisRoom left={975} label="C" />
+      <TetrisRoom left={1385} label="D" />
+
+      <TetrisTutor active={active} left={180} top={690} label="T1" color={green} delay={80} />
+      <TetrisTutor active={active} left={324} top={690} label="T2" color={lilac} delay={150} />
+      <TetrisTutor active={active} left={590} top={690} label="T3" color={gold} delay={220} />
+      <TetrisTutor active={active} left={734} top={690} label="T4" color={green} delay={290} />
+      <TetrisTutor active={active} left={1000} top={690} label="BUDDY" color={lilac} delay={360} width={280} />
+      <TetrisTutor active={active} left={1410} top={690} label="T6" color={green} delay={430} />
+      <TetrisTutor active={active} left={1554} top={690} label="T7" color={gold} delay={500} />
+
+      <div
+        style={{
+          position: 'absolute',
+          left: 1428,
+          top: 584,
+          width: 250,
+          height: 82,
+          display: 'grid',
+          placeItems: 'center',
+          border: `3px solid ${gold}`,
+          background: '#3a3426',
+          color: gold,
+          fontSize: 30,
+          fontWeight: 700,
+          animation: active ? `gpnTetrisJam 760ms ${EASE_SETTLE} 820ms both` : undefined,
+        }}
+      >
+        🍕 PIZZA
+      </div>
+      <div
+        style={{
+          position: 'absolute',
+          left: 1650,
+          top: 536,
+          color: red,
+          fontSize: 88,
+          fontWeight: 700,
+          animation: active ? `gpnTetrisNope 420ms ${EASE_SETTLE} 980ms both` : undefined,
+        }}
+      >
+        ×
+      </div>
+      <Footer />
+    </div>
+  );
+};
 
 const PerfectAllocation: Page = () => (
   <Statement size={150} align="center">
@@ -703,11 +903,88 @@ const PreferencesRule: Page = () => (
   </Statement>
 );
 
-const ChangeOneThing: Page = () => (
-  <Statement size={132} align="center">
-    Move one tutor.<br /><Accent>Break three other things.</Accent>
-  </Statement>
-);
+const ChangeOneThing: Page = () => {
+  const active = useIsActivePage();
+  return (
+    <div style={{ ...base, padding: 120 }}>
+      <style>{`
+        @keyframes gpnTutorMove {
+          0%, 18% { transform: translateX(0); }
+          72% { transform: translateX(510px); }
+          84% { transform: translateX(500px); }
+          100% { transform: translateX(510px); }
+        }
+        @keyframes gpnFailureLand {
+          0% { opacity: 0; transform: translateX(-26px) scale(.97); }
+          72% { opacity: 1; transform: translateX(3px) scale(1.01); }
+          100% { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        @keyframes gpnBreakLine {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+      <PageTitle>Move one tutor.</PageTitle>
+
+      <div style={{ position: 'absolute', left: 150, top: 320, width: 390, height: 330, border: `3px solid ${line}`, padding: 34, boxSizing: 'border-box' }}>
+        <div style={{ color: muted, fontSize: 28 }}>ROOM A</div>
+        <div style={{ marginTop: 44, display: 'flex', gap: 18 }}>
+          <div style={{ width: 92, height: 72, display: 'grid', placeItems: 'center', border: `3px solid ${green}`, color: green, fontSize: 28 }}>T1</div>
+          <div style={{ width: 92, height: 72, display: 'grid', placeItems: 'center', border: `3px solid ${lilac}`, color: lilac, fontSize: 28 }}>T2</div>
+        </div>
+      </div>
+      <div style={{ position: 'absolute', left: 660, top: 320, width: 390, height: 330, border: `3px solid ${line}`, padding: 34, boxSizing: 'border-box' }}>
+        <div style={{ color: muted, fontSize: 28 }}>ROOM B</div>
+        <div style={{ marginTop: 44, display: 'flex', gap: 18 }}>
+          <div style={{ width: 92, height: 72, display: 'grid', placeItems: 'center', border: `3px solid ${gold}`, color: gold, fontSize: 28 }}>T4</div>
+        </div>
+      </div>
+      <div
+        style={{
+          position: 'absolute',
+          left: 380,
+          top: 500,
+          width: 118,
+          height: 82,
+          display: 'grid',
+          placeItems: 'center',
+          border: '3px solid var(--osd-accent)',
+          background: '#3b3043',
+          color: 'var(--osd-accent)',
+          fontSize: 30,
+          fontWeight: 700,
+          transform: active ? undefined : 'translateX(510px)',
+          animation: active ? `gpnTutorMove 920ms ${EASE_SETTLE} 160ms both` : undefined,
+          zIndex: 2,
+        }}
+      >
+        T3
+      </div>
+      <svg style={{ position: 'absolute', left: 510, top: 506 }} width="140" height="70" viewBox="0 0 140 70" aria-hidden="true">
+        <path d="M5 35 H125 M105 15 L128 35 L105 55" fill="none" stroke="var(--osd-accent)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+
+      <FailureChip active={active} top={270} label="lecture" state="EMPTY" delay={760} />
+      <FailureChip active={active} top={422} label="buddies" state="SPLIT" delay={930} />
+      <FailureChip active={active} top={574} label="pizza" state="UNCOVERED" delay={1100} />
+
+      <div
+        style={{
+          position: 'absolute',
+          left: 150,
+          top: 760,
+          color: 'var(--osd-accent)',
+          fontSize: 88,
+          fontWeight: 700,
+          animation: active ? `gpnBreakLine 340ms ${EASE_SETTLE} 1320ms both` : undefined,
+        }}
+      >
+        Break three other things.
+      </div>
+      <Footer />
+    </div>
+  );
+};
 
 const StopChoosing: Page = () => (
   <Statement size={148} align="center">
@@ -796,8 +1073,8 @@ const FeasibleSpace: Page = () => {
       `}</style>
       <PageTitle>First, throw out the impossible ones.</PageTitle>
       <svg width="1680" height="710" viewBox="0 0 1680 710" role="img" aria-label="Candidate allocations outside the feasible region are crossed out while valid allocations remain">
-        <path d="M430 575 L520 250 L870 120 L1280 235 L1390 570 Z" fill="var(--osd-accent)" opacity="0.08" stroke="var(--osd-accent)" strokeWidth="4" />
-        <text x="910" y="390" textAnchor="middle" fill="var(--osd-text)" fontSize="42" fontWeight="700">nothing is broken</text>
+        <path d="M430 575 L520 250 L870 120 L1280 235 L1390 570 Z" fill="none" stroke="var(--osd-accent)" strokeWidth="4" strokeDasharray="16 18" opacity="0.7" />
+        <text x="910" y="390" textAnchor="middle" fill="var(--osd-text)" fontSize="42" fontWeight="700">legal allocations</text>
 
         <CandidateDot active={active} valid={false} cx={210} cy={190} label="A" delay={80} />
         <CandidateDot active={active} valid={false} cx={310} cy={510} label="B" delay={140} />
@@ -863,15 +1140,28 @@ const WeightsLie: Page = () => {
   return (
     <div style={{ ...base, padding: 120 }}>
       <style>{`
-        @keyframes gpnScoreGrow { from { transform: scaleX(0); opacity: .35; } to { transform: scaleX(1); opacity: 1; } }
+        @keyframes gpnTradeLeader {
+          from { transform: scaleX(0); opacity: .35; }
+          to { transform: scaleX(1); opacity: 1; }
+        }
+        @keyframes gpnTradeWinner {
+          0% { transform: scaleX(0) scaleY(1); opacity: .35; background: ${muted}; }
+          72% { transform: scaleX(.93) scaleY(1); opacity: 1; background: ${muted}; }
+          88% { transform: scaleX(1) scaleY(1.14); background: var(--osd-accent); }
+          100% { transform: scaleX(1) scaleY(1); opacity: 1; background: var(--osd-accent); }
+        }
+        @keyframes gpnTradeScore {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
         @keyframes gpnBadWinner { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
       <PageTitle>Unfortunately, the maths is very obedient.</PageTitle>
       <div style={{ marginTop: 120, display: 'flex', flexDirection: 'column', gap: 70 }}>
-        <TradeBar active={active} label="fill one required morning slot" score="+8500" width={570} delay={80} />
-        <TradeBar active={active} label="2 level matches + morning preference" score="+8960" width={600} winner delay={260} />
+        <TradeBar active={active} label="fill one required morning slot" score="+8500" width={570} delay={60} />
+        <TradeBar active={active} label="2 level matches + morning preference" score="+8960" width={600} winner delay={330} />
       </div>
-      <div style={{ marginTop: 72, textAlign: 'right', color: 'var(--osd-accent)', fontSize: 40, animation: active ? `gpnBadWinner 360ms ${EASE_SETTLE} 980ms both` : undefined }}>
+      <div style={{ marginTop: 72, textAlign: 'right', color: 'var(--osd-accent)', fontSize: 40, animation: active ? `gpnBadWinner 360ms ${EASE_SETTLE} 1160ms both` : undefined }}>
         weighted sum picks this ↑
       </div>
       <Footer />
@@ -902,30 +1192,87 @@ const BandLadder: Page = () => (
   </div>
 );
 
-const SolveFreezeRepeat: Page = () => (
-  <div style={base}>
-    <div style={{ position: 'absolute', left: 120, top: 105 }}><PageTitle>Solve one thing. Lock it. Keep going.</PageTitle></div>
-    <div style={{ position: 'absolute', left: 138, top: 284, width: 300, display: 'flex', flexDirection: 'column' }}>
-      <div style={{ height: 92, display: 'flex', alignItems: 'center', fontSize: 31 }}>Don’t bend rules</div>
-      <div style={{ height: 92, display: 'flex', alignItems: 'center', fontSize: 31 }}>Change less</div>
-      <div style={{ height: 92, display: 'flex', alignItems: 'center', fontSize: 31 }}>Cover jobs</div>
-      <div style={{ height: 92, display: 'flex', alignItems: 'center', fontSize: 31 }}>Be fair</div>
-      <div style={{ height: 92, display: 'flex', alignItems: 'center', fontSize: 31 }}>Preferences</div>
+const SolveFreezeRepeat: Page = () => {
+  const active = useIsActivePage();
+  const [phase, setPhase] = useState(() => active ? 0 : 5);
+
+  useEffect(() => {
+    if (!active) {
+      setPhase(5);
+      return;
+    }
+
+    setPhase(0);
+    const timers = [
+      window.setTimeout(() => setPhase(1), 120),
+      window.setTimeout(() => setPhase(2), 580),
+      window.setTimeout(() => setPhase(3), 1040),
+      window.setTimeout(() => setPhase(4), 1500),
+      window.setTimeout(() => setPhase(5), 1960),
+    ];
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [active]);
+
+  const shown = active ? phase : 5;
+  const scannerLeft = 480 + Math.max(0, Math.min(shown - 1, 4)) * 250;
+
+  return (
+    <div style={base}>
+      <style>{`
+        @keyframes gpnLexColumn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes gpnLexPulse {
+          0% { box-shadow: 0 0 0 0 rgba(233, 135, 224, .45); }
+          60% { box-shadow: 0 0 0 18px rgba(233, 135, 224, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(233, 135, 224, 0); }
+        }
+        @keyframes gpnLexScanGlow {
+          0%, 100% { opacity: .24; }
+          50% { opacity: .72; }
+        }
+      `}</style>
+      <div style={{ position: 'absolute', left: 120, top: 105 }}><PageTitle>Solve one thing. Lock it. Keep going.</PageTitle></div>
+      <div style={{ position: 'absolute', left: 138, top: 284, width: 300, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ height: 92, display: 'flex', alignItems: 'center', fontSize: 31 }}>Don’t bend rules</div>
+        <div style={{ height: 92, display: 'flex', alignItems: 'center', fontSize: 31 }}>Change less</div>
+        <div style={{ height: 92, display: 'flex', alignItems: 'center', fontSize: 31 }}>Cover jobs</div>
+        <div style={{ height: 92, display: 'flex', alignItems: 'center', fontSize: 31 }}>Be fair</div>
+        <div style={{ height: 92, display: 'flex', alignItems: 'center', fontSize: 31 }}>Preferences</div>
+      </div>
+
+      {shown >= 1 ? <LexPassColumn left={500} pass={0} current={active && shown === 1} /> : null}
+      {shown >= 2 ? <LexPassColumn left={750} pass={1} current={active && shown === 2} /> : null}
+      {shown >= 3 ? <LexPassColumn left={1000} pass={2} current={active && shown === 3} /> : null}
+      {shown >= 4 ? <LexPassColumn left={1250} pass={3} current={active && shown === 4} /> : null}
+      {shown >= 5 ? <LexPassColumn left={1500} pass={4} current={active && shown === 5} /> : null}
+
+      {active && shown > 0 ? (
+        <div
+          style={{
+            position: 'absolute',
+            left: scannerLeft,
+            top: 264,
+            width: 4,
+            height: 480,
+            background: `linear-gradient(to bottom, transparent, var(--osd-accent), transparent)`,
+            boxShadow: '0 0 20px rgba(233, 135, 224, .35)',
+            transition: `left 400ms ${EASE_SETTLE}`,
+            animation: 'gpnLexScanGlow 620ms ease-in-out infinite',
+            pointerEvents: 'none',
+          }}
+        />
+      ) : null}
+
+      <div style={{ position: 'absolute', left: 138, top: 786, width: 1568, height: 66, display: 'grid', placeItems: 'center', border: `2px solid ${line}`, color: muted, fontSize: 25, fontFamily: 'ui-monospace, monospace', letterSpacing: '.07em' }}>
+        THE ACTUAL HARD CONSTRAINTS · STILL THERE EVERY TIME
+      </div>
+      <div style={{ position: 'absolute', left: 530, top: 885 }}><FreezeMath /></div>
+      <Footer />
     </div>
-    <Steps>
-      <Step duration={160}><LexPassColumn left={500} pass={0} /></Step>
-      <Step duration={160}><LexPassColumn left={750} pass={1} /></Step>
-      <Step duration={160}><LexPassColumn left={1000} pass={2} /></Step>
-      <Step duration={160}><LexPassColumn left={1250} pass={3} /></Step>
-      <Step duration={160}><LexPassColumn left={1500} pass={4} /></Step>
-    </Steps>
-    <div style={{ position: 'absolute', left: 138, top: 786, width: 1568, height: 66, display: 'grid', placeItems: 'center', border: `2px solid ${line}`, color: muted, fontSize: 25, fontFamily: 'ui-monospace, monospace', letterSpacing: '.07em' }}>
-      THE ACTUAL HARD CONSTRAINTS · STILL THERE EVERY TIME
-    </div>
-    <div style={{ position: 'absolute', left: 530, top: 885 }}><FreezeMath /></div>
-    <Footer />
-  </div>
-);
+  );
+};
 
 const HighsResult: Page = () => (
   <div style={{ ...base, padding: 120 }}>
@@ -943,15 +1290,59 @@ const MilpReveal: Page = () => (
   </Statement>
 );
 
-const Closing: Page = () => (
-  <div style={{ ...base, padding: '110px 140px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-    <div style={{ maxWidth: 1580, fontSize: 136, fontWeight: 700, lineHeight: 0.98, letterSpacing: '-0.025em' }}>
-      So “perfect” means the <Accent>least-bad option</Accent>, in the right order.
+const Closing: Page = () => {
+  const active = useIsActivePage();
+  return (
+    <div style={{ ...base, padding: '110px 140px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+      <style>{`
+        @keyframes gpnPerfectStrike {
+          from { transform: scaleX(0); }
+          to { transform: scaleX(1); }
+        }
+        @keyframes gpnLeastBadLand {
+          0% { opacity: 0; transform: translateY(10px) scale(.97); }
+          72% { opacity: 1; transform: translateY(-2px) scale(1.012); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
+      <div style={{ maxWidth: 1580, fontSize: 136, fontWeight: 700, lineHeight: 0.98, letterSpacing: '-0.025em' }}>
+        So{' '}
+        <span style={{ position: 'relative', display: 'inline-block', color: muted }}>
+          “perfect”
+          <span
+            style={{
+              position: 'absolute',
+              left: -4,
+              right: -4,
+              top: '53%',
+              height: 8,
+              background: red,
+              transformOrigin: 'left center',
+              transform: active ? undefined : 'scaleX(1)',
+              animation: active ? `gpnPerfectStrike 360ms ${EASE_SETTLE} 300ms both` : undefined,
+            }}
+          />
+        </span>{' '}
+        means the{' '}
+        <span
+          style={{
+            display: 'inline-block',
+            color: 'var(--osd-accent)',
+            animation: active ? `gpnLeastBadLand 480ms ${EASE_SETTLE} 650ms both` : undefined,
+          }}
+        >
+          least-bad option
+        </span>
+        , in the right order.
+      </div>
+      <img src={gpnLogo} alt="Girls’ Programming Network" style={{ width: 520, height: 'auto', marginTop: 62 }} />
+        <div style={{ maxWidth: 1580, fontSize: 30, fontWeight: 400, marginTop: '2em'}}>
+            find me at <Accent>ashl.dev</Accent> :)
+        </div>
+      <Footer />
     </div>
-    <img src={gpnLogo} alt="Girls’ Programming Network" style={{ width: 520, height: 'auto', marginTop: 62 }} />
-    <Footer />
-  </div>
-);
+  );
+};
 
 DecisionMatrix.transition = matrixMorph;
 ExactlyOneConstraint.transition = matrixMorph;
@@ -998,7 +1389,7 @@ const rawNotes = [
   'A single weighted sum can trade across priorities. With today’s weights, two level matches plus one morning preference score eighty-nine sixty: enough to beat one morning staffing target at eighty-five hundred. Numerically correct, operationally cursed.',
   'So “perfect” is not really the biggest number. For this problem, perfect means putting our compromises in the correct order.',
   'The live solver’s five objective bands are explicit emergency relaxations, continuity, coverage, fairness, then preferences. Structural hard constraints remain in every pass. The first band is usually empty unless relaxations are enabled.',
-  'Each column is a fresh solve. Maximise the current band, then every later pass locks all earlier optima with a tolerance of half a point. Scores are integer-valued, so that admits no integer degradation. Weights still trade within a row, never across rows. This is the default path; if the five-pass plan cannot finish, the tool falls back to one weighted solve.',
+  'The columns build themselves, so no clicks here. Each column is a fresh solve: maximise the current band, then every later pass locks all earlier optima with a tolerance of half a point. Scores are integer-valued, so that admits no integer degradation. Weights still trade within a row, never across rows. This is the default path; if the five-pass plan cannot finish, the tool falls back to one weighted solve.',
   'HiGHS keeps an incumbent while proving a bound on every unseen solution. The band solve accepts an absolute gap below one. Because these objective scores are integers, a fractional gap means no better integer score exists. This ruler is illustrative, but that stopping rule is the real one.',
   'The technically correct phrase for all of this is mixed-integer linear programming. So “linear algebra” in the title is only lying a little.',
   'And that is what perfectly means here: not making everybody completely happy, because that allocation does not exist—just finding the least-bad compromise in the correct order.',
